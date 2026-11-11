@@ -116,7 +116,7 @@ struct ContentView: View {
                 Text("بيانات الهجوم").font(.headline)
                 Picker("مستوى قاعة المدينة", selection: $townHall) {
                     ForEach(levels, id: \.self) { level in
-                        Text("TH\\(level)").tag(level)
+                        Text("TH\(level)").tag(level)
                     }
                 }
                 .pickerStyle(.segmented)
@@ -166,7 +166,7 @@ struct ContentView: View {
                                         x: (proxy.size.width - fitted.width) / 2 + mark.x * fitted.width,
                                         y: (proxy.size.height - fitted.height) / 2 + mark.y * fitted.height
                                     )
-                                    .accessibilityLabel("علامة: \\(mark.kind)")
+                                    .accessibilityLabel("علامة: \(mark.kind)")
                             }
                             Rectangle()
                                 .fill(.clear)
@@ -196,12 +196,12 @@ struct ContentView: View {
                     }
                     .disabled(marks.isEmpty)
                     Spacer()
-                    Text("عدد العلامات: \\(marks.count)")
+                    Text("عدد العلامات: \(marks.count)")
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 if !marks.isEmpty {
                     Text(marks.map(\.kind).reduce(into: [:]) { counts, kind in counts[kind, default: 0] += 1 }
-                        .map { "\\($0.key): \\($0.value)" }
+                        .map { entry in "\(entry.key): \(entry.value)" }
                         .sorted()
                         .joined(separator: " • "))
                         .font(.caption)
@@ -359,7 +359,7 @@ struct ContentView: View {
 
     private func step(_ number: Int, _ title: String, _ detail: String) -> some View {
         HStack(alignment: .top, spacing: 10) {
-            Text("\\(number)")
+            Text("\(number)")
                 .font(.headline)
                 .frame(width: 28, height: 28)
                 .background(.tint.opacity(0.2), in: Circle())
