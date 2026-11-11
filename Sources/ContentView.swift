@@ -146,7 +146,7 @@ struct ContentView: View {
                                 .resizable()
                                 .frame(width: fitted.width, height: fitted.height)
                                 .position(x: proxy.size.width / 2, y: proxy.size.height / 2)
-                            ForEach(Array(marks.enumerated()), id: \.element.id) { index, mark in
+                            ForEach(marks) { mark in
                                 Text(shortLabel(mark.kind))
                                     .font(.system(size: 10, weight: .bold))
                                     .foregroundStyle(.white)
@@ -157,7 +157,7 @@ struct ContentView: View {
                                         x: (proxy.size.width - fitted.width) / 2 + mark.x * fitted.width,
                                         y: (proxy.size.height - fitted.height) / 2 + mark.y * fitted.height
                                     )
-                                    .accessibilityLabel("علامة \\(index + 1): \\(mark.kind)")
+                                    .accessibilityLabel("علامة: \\(mark.kind)")
                             }
                             Rectangle()
                                 .fill(.clear)
