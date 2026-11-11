@@ -1,0 +1,4 @@
+# Dataset validation
+# Training/export dependencies will be pinned when the dataset and model architecture are selected.
+Pillow>=10.0,<13
+pycocotools>=2.0.7,<3
