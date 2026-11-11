@@ -32,6 +32,8 @@ These are discovery/catalogue sources, not blanket permission to download or red
 
 | Source | Useful coverage | Notes |
 |---|---|---|
+| https://huggingface.co/datasets/nihatxp/clash-of-clans-screen-segmentation | 12,799 labelled frames: 7,966 scouting, 4,564 battle, 269 battle-end | Paid access listed as $50; free 30-frame sample. Licence permits training/shipping models but forbids redistributing dataset/model as standalone files and forbids cheats/bots/auto-attack. Verify TH15–TH18 coverage and compatibility with our strictly manual coaching use before purchase/use. |
+
 | https://goofygoblins.gg/bases?need=build | Community-submitted screenshots, TH15–TH18 filters | Candidate for genuine player-submitted screenshots; request permission/retain attribution where required. |
 | https://cocbasefinder.com/ | 13,000+ layouts, TH9–TH18 | Layout previews and screenshot matching; confirm image reuse rights. |
 | https://clashcompass.com/base | Published layouts including TH15–TH18 | Useful for layout diversity; may be polished layout previews rather than scout screenshots. |
@@ -66,7 +68,7 @@ Prefer screenshots captured directly from Clash of Clans:
 - Record Town Hall level only when known; mark uncertain levels as unknown.
 - Avoid duplicates and images with large UI overlays obscuring all useful content.
 
-Store only images that the project is permitted to use. Keep a source/permission record for each image. Do not scrape or redistribute images in violation of site terms or creator rights.
+Store only images that the project is permitted to use. Keep a source/permission record for each image. Do not scrape or redistribute images in violation of site terms or creator rights. The Hugging Face dataset above is a potential licensed shortcut, not yet purchased or imported; inspect the full licence and confirm TH15–TH18 coverage before use. Its stated licence explicitly excludes cheats, bots, auto-attack, and standalone redistribution.
 
 ## Annotation standard
 
