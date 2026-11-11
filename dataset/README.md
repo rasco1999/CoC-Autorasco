@@ -51,6 +51,13 @@ These are discovery/catalogue sources, not blanket permission to download or red
 | https://github.com/nschmeller/clash-bases | Aggregated base previews; lists TH15–TH18 counts | Inspect upstream source attribution and repository licence before reuse. |
 | https://coclayout.com/ar-SA/bases | Arabic catalogue with TH15–TH18 filters | Useful for discovery; check image rights. |
 
+## Additional open-licence starter dataset
+
+A second small starter dataset is documented at:
+https://huggingface.co/datasets/keremberke/clash-of-clans-object-detection
+
+Its dataset card states CC BY 4.0 and permits use in projects, with 125 annotated images in v1 and 301 in v4. Its classes include TH13 and common defenses; it is an older, small dataset and is **not** sufficient by itself for TH15–TH18 coverage or current-game validation. Preserve attribution and the CC BY 4.0 terms when using it. Do not assume that a model trained on it recognizes TH15–TH18 reliably.
+
 ## Collection target
 
 Initial pilot: 400 distinct villages, balanced by Town Hall:
