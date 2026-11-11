@@ -26,6 +26,15 @@ The dataset deliberately includes both:
 
 Keep the two types explicitly labelled in metadata. Do not mix them without recording the capture type.
 
+## Free labelled pilot sample discovered
+
+A free 30-frame sample is available from the dataset creator:
+https://huggingface.co/datasets/nihatxp/clash-of-clans-screen-segmentation-sample
+
+The sample page states that its 30 frames (10 scouting, 10 battle, 10 battle-end) may be downloaded and used for evaluation, research, and model training, and may be shared unchanged with a link to the dataset page. The sample has its own `coc-vision-licence`; retain the source link and do not resell it as standalone files or use it for cheats, bots, or auto-attack. This sample is useful for pipeline validation, but it does **not** establish coverage of TH15, TH16, TH17, and TH18 in balanced quantities. The sample images have not yet been copied into this repository.
+
+Google Images is a discovery tool, not a content licence. Google says to check the Usage Rights filter and then verify each image's licence details with both the licensor and hosting site. Do not place an image in the training set merely because it appears in Google results.
+
 ## Public discovery sources
 
 These are discovery/catalogue sources, not blanket permission to download or redistribute their images. Check each site's terms, creator attribution, and applicable Supercell fan-content rules before collecting or training on an image.
