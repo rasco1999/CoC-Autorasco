@@ -8,6 +8,15 @@ private struct VillageMark: Identifiable {
     let kind: String
 }
 
+
+private struct SectorAssessment: Identifiable {
+    let index: Int
+    let name: String
+    let score: Int
+    let count: Int
+    var id: Int { index }
+}
+
 struct ContentView: View {
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var villageImage: UIImage?
@@ -204,34 +213,144 @@ struct ContentView: View {
         }
     }
 
+    private let sectorNames = ["الشرق", "الجنوب الشرقي", "الجنوب", "الجنوب الغربي", "الغرب", "الشمال الغربي", "الشمال", "الشمال الشرقي"]
+
+    private func threatWeight(for kind: String) -> Int {
+        switch kind {
+        case "قاعة المدينة", "مونيليث": return 5
+        case "النسر", "سكّاتر": return 4
+        case "إنفيرنو", "دفاع جوي", "قلعة القبيلة": return 3
+        case "إكس بو", "منفاخ", "برج سحري": return 2
+        case "فخ مشتبه": return 1
+        default: return 0
+        }
+    }
+
+    private func adjustedWeight(for mark: VillageMark) -> Int {
+        var weight = threatWeight(for: mark.kind)
+        if armyStyle == "جوي" && ["دفاع جوي", "منفاخ"].contains(mark.kind) { weight += 3 }
+        if armyStyle == "أرضي" && ["مونيليث", "إنفيرنو", "سكّاتر", "النسر"].contains(mark.kind) { weight += 2 }
+        return weight
+    }
+
+    private var sectorAssessments: [SectorAssessment] {
+        var scores = Array(repeating: 0, count: 8)
+        var counts = Array(repeating: 0, count: 8)
+        for mark in marks {
+            let dx = mark.x - 0.5
+            let dy = mark.y - 0.5
+            if abs(dx) < 0.025 && abs(dy) < 0.025 { continue }
+            let angle = atan2(dy, dx)
+            let normalized = (angle + .pi * 2).truncatingRemainder(dividingBy: .pi * 2)
+            let index = Int((normalized / (.pi / 4)).rounded()) % 8
+            scores[index] += adjustedWeight(for: mark)
+            counts[index] += 1
+        }
+        return (0..<8).map { SectorAssessment(index: $0, name: sectorNames[$0], score: scores[$0], count: counts[$0]) }
+            .sorted { $0.score == $1.score ? $0.count < $1.count : $0.score < $1.score }
+    }
+
+    private var topThreats: [VillageMark] {
+        marks.filter { threatWeight(for: $0.kind) >= 3 }
+            .sorted { adjustedWeight(for: $0) > adjustedWeight(for: $1) }
+    }
+
+    private var confidenceLabel: String {
+        if marks.count >= 10 && marks.contains(where: { $0.kind == "قاعة المدينة" }) && marks.contains(where: { threatWeight(for: $0.kind) >= 3 }) {
+            return "متوسطة — تعتمد على دقة العلامات اليدوية"
+        }
+        if marks.count >= 4 { return "منخفضة إلى متوسطة — بعض الدفاعات غير محددة" }
+        return "منخفضة — أضف علامات أكثر قبل اعتماد الاتجاه"
+    }
+
+    private var tacticalAdvice: String {
+        switch armyStyle {
+        case "جوي":
+            return "ابدأ بتقييم الدفاعات الجوية والمنافخ على جهة الدخول. لا تلتزم بالمسار المقترح إذا كانت الدفاعات الجوية المتبقية تغطيه بتداخل قوي."
+        case "أرضي":
+            return "افحص المونيليث والإنفيرنو والسكّاتر حول المسار. جهّز قمعاً جانبياً واضحاً قبل إدخال القوة الرئيسية."
+        case "دفع مباشر":
+            return "تأكد من وجود ممر متصل نحو قلب القرية، وحدد مبنى أو دفاعاً محورياً كهدف أول للقوة الرئيسية."
+        case "استراتيجية دقيقة":
+            return "قسّم الهجوم إلى مراحل: قمع، دخول، معالجة قلب القرية، ثم تنظيف الأطراف. احتفظ بقدرات الأبطال للطوارئ."
+        default:
+            return "وازن بين تهديدات الجو والأرض، وابنِ القمع من جهتين قبل إدخال القوة الرئيسية عبر المسار المختار."
+        }
+    }
+
     private var planSection: some View {
         GroupBox {
             VStack(alignment: .trailing, spacing: 12) {
-                Text("ورقة عمل الهجوم").font(.headline)
-                Text("القرية المستهدفة: TH\\(townHall) • النمط المفضل: \\(armyStyle)")
+                Text("تحليل تكتيكي أولي").font(.headline)
+                Text("TH\(townHall) • النمط: \(armyStyle) • العلامات: \(marks.count)")
                     .font(.subheadline).foregroundStyle(.secondary)
-                Text("العلامات التي أدخلتها: \\(marks.count)")
-                    .font(.subheadline.bold())
-                ForEach(markKinds, id: \.self) { kind in
-                    let count = marks.filter { $0.kind == kind }.count
-                    if count > 0 {
-                        HStack {
-                            Text(kind)
-                            Spacer()
-                            Text("\\(count)").monospacedDigit().bold()
+                HStack {
+                    Text(confidenceLabel)
+                    Spacer()
+                    Text("الثقة")
+                        .fontWeight(.semibold)
+                }
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+
+                if marks.isEmpty {
+                    Text("لم تُضف علامات بعد. علّم مواقع قاعة المدينة والدفاعات الثقيلة أولاً.")
+                        .foregroundStyle(.orange)
+                } else {
+                    Text("جهة الدخول المرشحة").font(.subheadline.bold())
+                    if let best = sectorAssessments.first {
+                        Text(best.name)
+                            .font(.title2.bold())
+                            .foregroundStyle(.green)
+                        Text("أقل مجموع تهديد بين الجهات التي رُصدت: \(best.score) نقطة، مع \(best.count) علامة.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    }
+                    Text("مقارنة الجهات").font(.subheadline.bold())
+                    ForEach(sectorAssessments) { sector in
+                        HStack(spacing: 8) {
+                            Text(sector.name).frame(width: 105, alignment: .trailing)
+                            GeometryReader { proxy in
+                                ZStack(alignment: .leading) {
+                                    Capsule().fill(.secondary.opacity(0.15))
+                                    Capsule().fill(sector.index == sectorAssessments.first?.index ? .green : .orange)
+                                        .frame(width: proxy.size.width * CGFloat(sector.score) / CGFloat(max(sectorAssessments.map(\.score).max() ?? 1, 1)))
+                                }
+                            }
+                            .frame(height: 9)
+                            Text("\(sector.score)").monospacedDigit().frame(width: 24)
                         }
-                        .font(.callout)
+                        .font(.caption)
+                    }
+                    Text("أعلى التهديدات المعلّمة").font(.subheadline.bold())
+                    if topThreats.isEmpty {
+                        Text("لم تُعلّم دفاعات ثقيلة بعد.")
+                            .font(.footnote).foregroundStyle(.secondary)
+                    } else {
+                        ForEach(Array(topThreats.prefix(5).enumerated()), id: \.offset) { item in
+                            HStack {
+                                Text(item.element.kind)
+                                Spacer()
+                                Text("(\(Int(item.element.x * 100))%, \(Int(item.element.y * 100))%)")
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                            .font(.callout)
+                        }
                     }
                 }
-                step(1, "راجع توزيع الدفاعات", "استخدم العلامات على الصورة لتحديد مناطق تداخل الضرر والدفاعات التي يجب التعامل معها أولاً.")
-                step(2, "اختر جهة الدخول", "فضّل الجهة التي تمنحك مساراً واضحاً نحو الهدف وتقلل تعرض القوة الرئيسية لعدة دفاعات ثقيلة في وقت واحد.")
-                step(3, "كوّن القمع", "نظّف المباني الجانبية قبل إنزال القوة الرئيسية حتى لا تنحرف عن المسار المقصود.")
-                step(4, "نفّذ الهجوم على مراحل", "وزّع القوات وفق أدوارها، واحتفظ بالتعاويذ وقدرات الأبطال للحظات الحاسمة.")
-                step(5, "تحقق من المخاطر", "الفخاخ غير المرئية، مستويات المباني، القوات المدافعة، ومسارات الحركة تحتاج إلى تحقق داخل اللعبة.")
+
+                Divider()
+                Text("خطة التنفيذ المقترحة").font(.headline)
+                step(1, "تأكيد الهدف", "تحقق من موقع قاعة المدينة والدفاعات الثقيلة داخل الصورة، وعدّل العلامات إذا كانت غير دقيقة.")
+                step(2, "الدخول من \(sectorAssessments.first?.name ?? "الجهة الأنسب")", "هذا ترشيح حسابي أولي مبني على العلامات الظاهرة فقط؛ افحص الجدران ومسار الوصول قبل التنفيذ.")
+                step(3, "بناء القمع", "استخدم وحدات التنظيف على جانبي جهة الدخول حتى تتجه القوة الرئيسية إلى المسار المقصود.")
+                step(4, "معالجة القلب", "وجّه القوة الرئيسية نحو الهدف المركزي، واحتفظ بالتعاويذ والقدرات للحظة تعرضها لأعلى ضرر.")
+                step(5, "التنظيف والتحقق", "راقب المباني الطرفية والوقت المتبقي، ولا تفترض أن الفخاخ أو القوات المدافعة قد كُشفت.")
+                Text("توصية حسب النمط").font(.subheadline.bold())
+                Text(tacticalAdvice).font(.callout)
                 if !notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    Text("ملاحظاتك: \\(notes)").font(.footnote)
+                    Text("ملاحظاتك: \(notes)").font(.footnote)
                 }
-                Text("هذه الورقة تلخص العلامات اليدوية ولا تحلل الصورة تلقائياً أو تختار تشكيلة مثلى بعد. الخطوة التالية هي بناء محرك قواعد يربط مواقع الدفاعات ونوع الجيش بخطة أكثر تخصيصاً.")
+                Text("حدود التحليل: هذا محرك قواعد تجريبي، وليس رؤية حاسوبية. يوازن العلامات التي أدخلتها يدوياً ولا يعرف مستويات المباني أو الجدران أو الفخاخ المخفية. لا يضمن ثلاث نجوم ولا يختار تشكيلة قوات نهائية.")
                     .font(.footnote).foregroundStyle(.orange)
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
