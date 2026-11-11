@@ -326,11 +326,11 @@ struct ContentView: View {
                         Text("لم تُعلّم دفاعات ثقيلة بعد.")
                             .font(.footnote).foregroundStyle(.secondary)
                     } else {
-                        ForEach(Array(topThreats.prefix(5).enumerated()), id: \.offset) { item in
+                        ForEach(topThreats.prefix(5)) { mark in
                             HStack {
-                                Text(item.element.kind)
+                                Text(mark.kind)
                                 Spacer()
-                                Text("(\(Int(item.element.x * 100))%, \(Int(item.element.y * 100))%)")
+                                Text("(\(Int(mark.x * 100))%, \(Int(mark.y * 100))%)")
                                     .font(.caption).foregroundStyle(.secondary)
                             }
                             .font(.callout)
