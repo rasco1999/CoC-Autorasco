@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0",
+  "coordinate_format": "pixel_xywh",
+  "classes": [
+    {
+      "id": 1,
+      "name": "town_hall",
+      "label_ar": "قاعة المدينة"
+    },
+    {
+      "id": 2,
+      "name": "monolith",
+      "label_ar": "المونوليث"
+    },
+    {
+      "id": 3,
+      "name": "eagle_artillery",
+      "label_ar": "مدفع النسر"
+    },
+    {
+      "id": 4,
+      "name": "scattershot",
+      "label_ar": "قاذف التشتيت"
+    },
+    {
+      "id": 5,
+      "name": "inferno_tower",
+      "label_ar": "برج الجحيم"
+    },
+    {
+      "id": 6,
+      "name": "x_bow",
+      "label_ar": "القوس X"
+    },
+    {
+      "id": 7,
+      "name": "air_defense",
+      "label_ar": "دفاع جوي"
+    },
+    {
+      "id": 8,
+      "name": "air_sweeper",
+      "label_ar": "موجّه هوائي"
+    },
+    {
+      "id": 9,
+      "name": "wizard_tower",
+      "label_ar": "برج الساحر"
+    },
+    {
+      "id": 10,
+      "name": "archer_tower",
+      "label_ar": "برج الرماة"
+    },
+    {
+      "id": 11,
+      "name": "cannon",
+      "label_ar": "مدفع"
+    },
+    {
+      "id": 12,
+      "name": "hidden_tesla",
+      "label_ar": "تسلا مخفي ظاهر"
+    },
+    {
+      "id": 13,
+      "name": "bomb_tower",
+      "label_ar": "برج القنابل"
+    },
+    {
+      "id": 14,
+      "name": "spell_tower",
+      "label_ar": "برج التعويذات"
+    },
+    {
+      "id": 15,
+      "name": "revenge_tower",
+      "label_ar": "برج الانتقام"
+    },
+    {
+      "id": 16,
+      "name": "guardian",
+      "label_ar": "الحارس/Guardian"
+    },
+    {
+      "id": 17,
+      "name": "clan_castle",
+      "label_ar": "قلعة القبيلة"
+    },
+    {
+      "id": 18,
+      "name": "wall",
+      "label_ar": "جدار"
+    }
+  ],
+  "annotation_rules": {
+    "visible_instances_only": true,
+    "hidden_traps": "Do not annotate; they are not visible in scout screenshots.",
+    "uncertain_identity": "Mark as ignore/crowd region; do not guess.",
+    "walls": "Annotate wall segments or use a separate segmentation mask; do not treat a whole wall network as one ordinary bounding box.",
+    "town_hall_level": "Store as image-level metadata, not as a separate visual class."
+  }
+}
