@@ -18,8 +18,15 @@ targets:
     platform: iOS
     sources:
       - path: Sources
+    preBuildScripts:
+      - name: Generate 1024px App Icon
+        script: |
+          mkdir -p Sources/Assets.xcassets/AppIcon.appiconset
+          sips -s format png -z 1024 1024 Sources/Assets.xcassets/BrandIcon.imageset/BrandIcon.jpg --out Sources/Assets.xcassets/AppIcon.appiconset/AppIcon.png >/dev/null
+        basedOnDependencyAnalysis: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: iq.mur.cocautorasco
         PRODUCT_NAME: "CoC AutoRasco"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SWIFT_EMIT_LOC_STRINGS: "YES"
